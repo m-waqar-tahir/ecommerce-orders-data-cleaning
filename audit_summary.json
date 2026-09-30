@@ -1,0 +1,207 @@
+{
+  "project": "DecodeLabs Data Analytics - Project 1: Data Cleaning & Preparation",
+  "raw_file": "data/raw/orders_raw.csv",
+  "cleaned_file": "data/cleaned/orders_cleaned.csv",
+  "raw_sha256": "ee0e0653974cd865373692f00469260f258865fb178b709e900d3fb534107033",
+  "cleaned_sha256": "5450971f50695d544710cc50cc96392759b46c46ac4a1da5edaf5645d9d961e3",
+  "rows_in": 1200,
+  "rows_out": 1200,
+  "columns": 14,
+  "audit_before": {
+    "rows": 1200,
+    "columns": 14,
+    "missing_by_column": {
+      "OrderID": 0,
+      "Date": 0,
+      "CustomerID": 0,
+      "Product": 0,
+      "Quantity": 0,
+      "UnitPrice": 0,
+      "ShippingAddress": 0,
+      "PaymentMethod": 0,
+      "OrderStatus": 0,
+      "TrackingNumber": 0,
+      "ItemsInCart": 0,
+      "CouponCode": 309,
+      "ReferralSource": 0,
+      "TotalPrice": 0
+    },
+    "duplicate_full_rows": 0,
+    "duplicate_order_ids": 0,
+    "duplicate_tracking_numbers": 0,
+    "date_not_iso_format": 0,
+    "date_unparseable": 0,
+    "whitespace_cells": 0,
+    "case_inconsistent_cells": -309,
+    "non_numeric_cells": 0,
+    "price_not_2dp_cells": {
+      "UnitPrice": 114,
+      "TotalPrice": 260
+    },
+    "id_pattern_violations": {
+      "OrderID": 0,
+      "CustomerID": 0,
+      "TrackingNumber": 0
+    },
+    "total_price_mismatch": 0,
+    "crlf_line_breaks": 1200
+  },
+  "changes": [
+    {
+      "title": "coupon_missing",
+      "description": "CouponCode blanks replaced with the explicit label 'No Coupon'",
+      "impact": "Kept every affected row instead of deleting it; mode imputation rejected because it would fabricate coupon usage",
+      "records_affected": 309,
+      "columns": "CouponCode",
+      "check": "Blank CouponCode values",
+      "id": "CR001",
+      "status": "Resolved"
+    },
+    {
+      "title": "price_precision",
+      "description": "UnitPrice and TotalPrice fixed to exactly 2 decimal places; Quantity and ItemsInCart stored as integers",
+      "impact": "Cells reformatted: UnitPrice 114, TotalPrice 260 (e.g. 224 to 224.00). No value changed, only its representation",
+      "records_affected": 260,
+      "columns": "UnitPrice, TotalPrice, Quantity, ItemsInCart",
+      "check": "Prices not at 2 decimal places, or numbers stored as text",
+      "id": "CR002",
+      "status": "Resolved"
+    },
+    {
+      "title": "file_format",
+      "description": "Saved as UTF-8 CSV with LF line endings (raw file used Windows CRLF)",
+      "impact": "Clean line-by-line diffs in Git; no cell values affected",
+      "records_affected": 1200,
+      "columns": "file",
+      "check": "Non-standard line endings or encoding",
+      "id": "CR003",
+      "status": "Resolved"
+    }
+  ],
+  "checks_passed_without_change": [
+    {
+      "title": "whitespace",
+      "description": "Leading, trailing or repeated spaces in any column",
+      "impact": "Prevents 'Laptop' and 'Laptop ' being counted as different values",
+      "records_affected": 0,
+      "columns": "all",
+      "check": "Leading, trailing or repeated spaces in any column",
+      "id": "AU001",
+      "status": "No issue found"
+    },
+    {
+      "title": "other_missing",
+      "description": "Missing values outside CouponCode",
+      "impact": "No records dropped; listwise deletion avoided",
+      "records_affected": 0,
+      "columns": "non-coupon columns",
+      "check": "Missing values outside CouponCode",
+      "id": "AU002",
+      "status": "No issue found"
+    },
+    {
+      "title": "case",
+      "description": "Inconsistent capitalisation in text, ID and coupon fields",
+      "impact": "Guarantees one spelling per category for grouping and joins",
+      "records_affected": 0,
+      "columns": "Product, PaymentMethod, OrderStatus, ReferralSource, ShippingAddress, CouponCode, OrderID, CustomerID, TrackingNumber",
+      "check": "Inconsistent capitalisation in text, ID and coupon fields",
+      "id": "AU003",
+      "status": "No issue found"
+    },
+    {
+      "title": "dates",
+      "description": "Dates not in ISO 8601 (YYYY-MM-DD) format",
+      "impact": "Dates sort and filter correctly in Excel, SQL and pandas",
+      "records_affected": 0,
+      "columns": "Date",
+      "check": "Dates not in ISO 8601 (YYYY-MM-DD) format",
+      "id": "AU004",
+      "status": "No issue found"
+    },
+    {
+      "title": "duplicates",
+      "description": "Duplicate rows or repeated OrderIDs",
+      "impact": "Full-row duplicates: 0; extra OrderID rows: 0",
+      "records_affected": 0,
+      "columns": "OrderID",
+      "check": "Duplicate rows or repeated OrderIDs",
+      "id": "AU005",
+      "status": "No issue found"
+    }
+  ],
+  "verification": [
+    {
+      "check": "Duplicate OrderIDs",
+      "failures": 0,
+      "passed": true,
+      "gate": true
+    },
+    {
+      "check": "Incorrectly formatted dates (not YYYY-MM-DD)",
+      "failures": 0,
+      "passed": true,
+      "gate": true
+    },
+    {
+      "check": "Duplicate rows (all columns)",
+      "failures": 0,
+      "passed": true,
+      "gate": false
+    },
+    {
+      "check": "Duplicate TrackingNumbers",
+      "failures": 0,
+      "passed": true,
+      "gate": false
+    },
+    {
+      "check": "Missing / null-like values (all columns)",
+      "failures": 0,
+      "passed": true,
+      "gate": false
+    },
+    {
+      "check": "IDs not matching expected pattern",
+      "failures": 0,
+      "passed": true,
+      "gate": false
+    },
+    {
+      "check": "Prices not at 2 decimal places",
+      "failures": 0,
+      "passed": true,
+      "gate": false
+    },
+    {
+      "check": "Non-numeric Quantity / UnitPrice / ItemsInCart / TotalPrice",
+      "failures": 0,
+      "passed": true,
+      "gate": false
+    },
+    {
+      "check": "TotalPrice differs from Quantity x UnitPrice",
+      "failures": 0,
+      "passed": true,
+      "gate": false
+    },
+    {
+      "check": "Row count differs from expected",
+      "failures": 0,
+      "passed": true,
+      "gate": false
+    }
+  ],
+  "observations": [
+    "Coupons are not reflected in TotalPrice: it equals Quantity x UnitPrice on all 1,200 rows, so discount and shipping effects cannot be measured from this file.",
+    "497 orders (41.4%) are Cancelled or Returned but still carry a TotalPrice. Filter on OrderStatus before calculating revenue.",
+    "487 Cancelled or Pending orders have a TrackingNumber, which is unusual for orders that never shipped. Kept as supplied; confirm with the data owner.",
+    "UnitPrice varies widely inside a single product (Laptop: 18.20 to 699.93), so it is not a stable catalogue price. Kept as supplied.",
+    "8 TotalPrice values fall outside the 1.5 x IQR fence. They are valid high-quantity, high-price orders and were retained.",
+    "11 CustomerIDs appear on more than one order. These are repeat customers with different OrderIDs, not duplicates, and were retained."
+  ],
+  "date_range": [
+    "2023-01-01",
+    "2025-06-30"
+  ]
+}
