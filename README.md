@@ -26,7 +26,7 @@ The raw file was in better condition than a typical extract. The audit found one
 | CR002 | `UnitPrice` and `TotalPrice` fixed to 2 decimals (e.g. `224` to `224.00`); no numeric value altered | 260 rows |
 | CR003 | Saved as UTF-8 with LF line endings (raw used Windows CRLF) | file-level |
 
-**Start with the notebook:** [`notebooks/data_cleaning_project1.ipynb`](notebooks/data_cleaning_project1.ipynb) walks through every step with outputs. Full detail, including the audit checks that found nothing to fix, is in [`reports/Data_Cleaning_Change_Log.pdf`](reports/Data_Cleaning_Change_Log.pdf).
+**Start with the notebook:** [`data_cleaning_project1.ipynb`](data_cleaning_project1.ipynb) walks through every step with outputs. Full detail, including the audit checks that found nothing to fix, is in [`/Data_Cleaning_Change_Log.pdf`](Data_Cleaning_Change_Log.pdf).
 
 ### Why blanks became "No Coupon" instead of being deleted or imputed
 
@@ -72,25 +72,6 @@ Eight further checks cover duplicate rows and tracking numbers, remaining nulls,
 
 The last notebook cell confirms its output is identical to the script's. The `tests/` folder runs the same logic against a deliberately messy synthetic table (duplicates, mixed date formats, inconsistent case, stray whitespace, missing values), which shows the pipeline handles real mess and not just this file.
 
-## Repository structure
-
-```
-.
-├── data/
-│   ├── raw/orders_raw.csv                 # original file, untouched
-│   └── cleaned/orders_cleaned.csv         # cleaned output
-├── notebooks/
-│   └── data_cleaning_project1.ipynb       # step-by-step walkthrough with outputs
-├── src/
-│   ├── clean_data.py                      # same logic as a command-line script
-│   └── generate_change_log.py             # builds the PDF from the audit JSON
-├── reports/
-│   ├── Data_Cleaning_Change_Log.pdf       # the change log deliverable
-│   └── audit_summary.json                 # machine-readable audit and change log
-├── tests/test_clean_data.py
-├── requirements.txt
-└── README.md
-```
 
 ## How to run
 
@@ -101,17 +82,14 @@ pip install -r requirements.txt
 
 jupyter notebook notebooks/data_cleaning_project1.ipynb   # run all cells
 
-# or, without Jupyter:
-python src/clean_data.py            # writes the cleaned CSV and audit JSON
-python src/generate_change_log.py   # writes the PDF change log
-python -m pytest tests              # runs the tests
+
 ```
 
 Output is deterministic. Re-running produces identical files, and the SHA-256 hashes of the raw and cleaned files are recorded in the change log.
 
 ## Tech stack
 
-Python 3.10+, pandas, Jupyter, ReportLab, pytest.
+Python 3.10+, pandas, Jupyter.
 
 ## Author
 
